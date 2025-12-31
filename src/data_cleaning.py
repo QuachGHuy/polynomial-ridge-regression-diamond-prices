@@ -1,25 +1,28 @@
-import sys
-import os
 import pandas as pd
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+class DataCleaner:
+    def __init__(self, data: pd.DataFrame) -> None:
+        self.df = data.copy()
 
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-raw_data_dir = os.path.join(project_root, "data", "raw", "diamonds.csv")
-cleand_data_dir = os.path.join(project_root, "data", "cleaned", "cleaned_diamonds.csv")
+    def clean(self) -> pd.DataFrame:
+        print(f"Data size: {self.df.shape[0]} rows x {self.df.shape[1]} cols")
+        self._remove_outliers()
+        self._handle_missing_values()
+        print(f"Data size: {self.df.shape[0]} rows x {self.df.shape[1]} cols")
 
-# Load data
-df = pd.read_csv(raw_data_dir, index_col=0)
+        return self.df
 
-# Remove outliers
-df = df[(df["x"] > 0) & (df["y"] > 0) & (df["z"] > 0)]
-df = df[(df["depth"]<75)&(df["depth"]>50)]
-df = df[(df["table"]<80)&(df["table"]>40)]
-df = df[(df["y"]<30)]
-df = df[(df["z"]<10)&(df["z"]>2)]
+    def _remove_outliers(self):
+        self.df = self.df[
+            (self.df["x"] > 0) & (self.df["y"] > 0) & (self.df["z"] > 0) &
+            (self.df["y"] < 30) & 
+            (self.df["z"] < 10) & (self.df["z"] > 2) &
+            (self.df["depth"].between(50, 75)) &
+            (self.df["table"].between(40, 80))
+        ]
 
-# Drop NaN
-df = df.dropna()
+    def _handle_missing_values(self):
+        self.df.dropna(inplace=True)
 
-# Save to
-df.to_csv(cleand_data_dir, index=False)
+    def save(self, file_path: str) -> None:
+        self.df.to_csv(file_path, index=False)
