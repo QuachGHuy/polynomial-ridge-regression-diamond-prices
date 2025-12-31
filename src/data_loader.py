@@ -1,9 +1,12 @@
 import pandas as pd
 
 class DataLoader:
-    def __init__(self, file_path):
+    def __init__(self, file_path: str) -> None:
         self.file_path = file_path
 
-    def load(self):
-        df = pd.read_csv(self.file_path, index_col=0)
-        return df
+    def load(self) -> pd.DataFrame:
+        try:
+            df = pd.read_csv(self.file_path, index_col=0)
+            return df
+        except FileNotFoundError as e:
+            raise e
