@@ -29,6 +29,7 @@ class FeatureEngineering:
         self._create_geometry_features()
         self._log_transform()
         self._add_interaction_term()
+        self._add_bias()
         
         print("Feature Engineering completed")
         print(f"DataFrame: {self.df.shape[0]} rows x {self.df.shape[1]} cols \n")
@@ -45,7 +46,7 @@ class FeatureEngineering:
         self.df["volume"] = self.df["x"] * self.df["y"] * self.df["z"]
         self.df["density"] = self.df["carat"] / self.df["volume"]
 
-        self.df.drop(columns=["x", "y", "z", "volume"], inplace=True)
+        self.df.drop(columns=["x", "y", "z", "volume"], inplace=True, errors="ignore")
     
     def _log_transform(self):
         for feature in self.log_features:
@@ -73,7 +74,11 @@ class FeatureEngineering:
             for inter in tar_col:
                 if inter in self.df.columns and inter != primary_col:
                     self.df[f"{poly_name}_x_{inter}"] = self.df[poly_name] * self.df[inter]
-                
+
+    def _add_bias(self):
+        if "bias" not in self.df.columns:
+            self.df.insert(loc=0, column="bias", value=1)
+                  
                 
     
     
