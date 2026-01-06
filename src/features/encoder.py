@@ -1,7 +1,6 @@
 import pandas as pd
 from typing import Dict
 
-
 def ordinal_encode(
     df: pd.DataFrame,
     mappings: Dict[str, Dict[str, int]]

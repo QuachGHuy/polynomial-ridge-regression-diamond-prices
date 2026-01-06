@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 class RobustScaler:
     def __init__(self, features: list[str]):
         self.features = features

@@ -1,7 +1,6 @@
 import pandas as pd
 from typing import List
 
-
 def add_polynomial_interaction_features(
     df: pd.DataFrame,
     primary: str,
@@ -15,10 +14,8 @@ def add_polynomial_interaction_features(
     - carat_pow_2
     - carat_pow_2_x_density
     """
-
     if primary not in df.columns:
         return df.copy()
-
 
     result = df.copy()
 
