@@ -7,7 +7,7 @@ class DataCleaner:
     def clean(self) -> pd.DataFrame:
         print(f"Data size: {self.df.shape[0]} rows x {self.df.shape[1]} cols")
         self._remove_outliers()
-        self._handle_missing_values()
+        self._drop_missing_rows()
         print(f"Data size: {self.df.shape[0]} rows x {self.df.shape[1]} cols")
 
         return self.df
@@ -21,7 +21,7 @@ class DataCleaner:
             (self.df["table"].between(40, 80))
         ]
 
-    def _handle_missing_values(self):
+    def _drop_missing_rows(self):
         self.df.dropna(inplace=True)
 
     def save(self, file_path: str) -> None:
