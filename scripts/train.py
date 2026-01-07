@@ -2,6 +2,8 @@ import os
 import sys
 import yaml
 import numpy as np
+import pandas as pd
+import pickle
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(PROJECT_ROOT)
@@ -17,7 +19,8 @@ from src.models import PolynomialRidge
 
 
 CONFIG_DIR = os.path.join(PROJECT_ROOT,  "configs")
-DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+RAW_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
+CLEANED_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
 ARTIFACT_DIR = os.path.join(PROJECT_ROOT, "artifacts", "models", "polynomial_ridge")
 
 def load_yaml(path: str) -> dict:
@@ -37,11 +40,15 @@ def main():
     } 
 
     # 2. LOAD DATA
-    df = load(os.path.join(DATA_DIR,"raw","diamonds.csv"))
+    df = load(os.path.join(RAW_DATA_DIR, "diamonds.csv"))
 
     # 3. DATA CLEANING
     cleaner = DataCleaner(df)
     df = cleaner.clean()
+
+    # Save cleaned data
+    os.makedirs(CLEANED_DATA_DIR, exist_ok=True)
+    df.to_parquet(os.path.join(CLEANED_DATA_DIR, "cleaned_diamonds.parquet"), index=False)
 
     # 4. FEATURES ENGINEERING
     # Ordinal Encoding
@@ -67,7 +74,7 @@ def main():
     y = df[target]
     X = df.drop(columns=target)
 
-    X_train, y_train, X_valid, y_valid, X_test, y_test = split_data(X, y)
+    X_train, y_train, _, _, X_test, y_test = split_data(X, y, test_size=0.2 , valid_size= 0)
 
     # 6. Scaling
     categorical_features = [
@@ -108,6 +115,10 @@ def main():
     weights = model.theta
     np.save(os.path.join(ARTIFACT_DIR, "weight.npy"), weights)
 
+    # Save scaler
+    with open(os.path.join(ARTIFACT_DIR, "scaler.pkl"), "wb") as f:
+        pickle.dump(scaler, f)
+
     # Save model config
     with open(os.path.join(ARTIFACT_DIR, "model_config.yaml"), "w") as f:
         yaml.safe_dump(model_config, f)
@@ -120,3 +131,4 @@ def main():
 
     with open(os.path.join(ARTIFACT_DIR, "features_schema.yaml"), "w") as f:
         yaml.safe_dump(features_schema, f, sort_keys=False)
+    
