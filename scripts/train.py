@@ -69,14 +69,14 @@ def main():
 
     df = add_polynomial_interaction_features(df, primary, features, degree)
 
-    # 5. Split Data
+    # 5. SPLIT DATA
     target = "price"
     y = df[target]
     X = df.drop(columns=target)
 
     X_train, y_train, _, _, X_test, y_test = split_data(X, y, test_size=0.2 , valid_size= 0)
 
-    # 6. Scaling
+    # 6. SCALING
     categorical_features = [
         feature
         for feature in feature_config["encoding"]["ordinal"].keys()
@@ -92,28 +92,28 @@ def main():
 
     X_train_scaled = scaler.fit_transform(X_train)
 
-    # 7. Add Intercept
+    # 7. ADD INTERCEPT
     X_train_final = add_intercept(X_train_scaled)
 
-    # 8. Train model
+    # 8. TRAIN MODEL
     alpha = model_config["alpha"]
     epochs = model_config["epochs"]
     batch_size = model_config["batch_size"]
     learning_rate = model_config["learning_rate"]
     
+
     model = PolynomialRidge(alpha=alpha)
-    model.fit(X=X_train_final,
-              y=y_train,
+    model.fit(X=X_train_final.to_numpy(),
+              y=y_train.to_numpy(),
               epochs=epochs,
               batch_size=batch_size,
               lr=learning_rate)
     
-    # 9. Save artifact
+    # 9. SAVE ARTIFACTS
     os.makedirs(ARTIFACT_DIR, exist_ok=True)
 
     # Save weights
-    weights = model.theta
-    np.save(os.path.join(ARTIFACT_DIR, "weight.npy"), weights)
+    model.save(os.path.join(ARTIFACT_DIR, "weights.npy"))
 
     # Save scaler
     with open(os.path.join(ARTIFACT_DIR, "scaler.pkl"), "wb") as f:
@@ -131,4 +131,6 @@ def main():
 
     with open(os.path.join(ARTIFACT_DIR, "features_schema.yaml"), "w") as f:
         yaml.safe_dump(features_schema, f, sort_keys=False)
-    
+
+if __name__ == "__main__":
+    main()
