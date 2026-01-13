@@ -18,5 +18,4 @@ class PredictRequest(BaseModel):
     records: List[DiamondRecord]
 
 class PredictResponse(BaseModel):
-    price: float
-
+    prices: List[float]

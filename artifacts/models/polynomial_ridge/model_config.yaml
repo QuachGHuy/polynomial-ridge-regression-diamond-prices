@@ -1,6 +1,4 @@
-model_name: PolynomialRidge
 alpha: 0.05
-training:
-  epochs: 250
-  batch_size: 128
-  learning_rate: 0.003
+batch_size: 128
+epochs: 250
+learning_rate: 0.003
