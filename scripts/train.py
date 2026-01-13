@@ -40,7 +40,7 @@ def main():
     } 
 
     # 2. LOAD DATA
-    df = load(os.path.join(RAW_DATA_DIR, "diamonds.csv"))
+    df = load(os.path.join(RAW_DATA_DIR, "diamonds.csv"), index_col=False)
 
     # 3. DATA CLEANING
     cleaner = DataCleaner(df)
@@ -57,17 +57,18 @@ def main():
 
     # Physical Feature
     df = create_density_feature(df)
-
+   
     # Log Transform
     log_features = feature_config["log_features"]
     df = log_transform(df, log_features)
-
+ 
     # Interaction Terms
     primary = feature_config["interaction"]["primary"]
     features = feature_config["interaction"]["features"]
     degree = feature_config["interaction"]["degree"]
 
     df = add_polynomial_interaction_features(df, primary, features, degree)
+
 
     # 5. SPLIT DATA
     target = "price"
@@ -131,6 +132,14 @@ def main():
 
     with open(os.path.join(ARTIFACT_DIR, "features_schema.yaml"), "w") as f:
         yaml.safe_dump(features_schema, f, sort_keys=False)
+    
+    # Copy features config
+    import shutil
+
+    shutil.copy(
+        os.path.join(CONFIG_DIR, "features.yaml"),
+        os.path.join(ARTIFACT_DIR, "features.yaml")
+    )
 
 if __name__ == "__main__":
     main()

@@ -6,6 +6,9 @@ def load(file_path: str, index_col: bool = False) -> pd.DataFrame:
         
         if df.empty:
             raise ValueError("Loaded DataFrame is empty")
+        
+        if 'Unnamed: 0' in df.columns:
+            df = df.drop(columns=['Unnamed: 0'])
 
         print(f"Data loaded: {df.shape[0]} rows, {df.shape[1]} columns")
         return df
