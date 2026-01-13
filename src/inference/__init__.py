@@ -1,0 +1,2 @@
+from .artifacts_loader import InferenceArtifacts
+from .service import predict_from_dataframe

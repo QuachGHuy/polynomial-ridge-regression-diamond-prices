@@ -1,16 +1,22 @@
+import os
+import sys
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from src.inference.artifacts_loader import InferenceArtifacts
+from src.inference import InferenceArtifacts
 from src.api.routes.predict import router as predict_router
 
-ARTIFACTS_DIR = "artifacts/models"
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+sys.path.append(PROJECT_ROOT)
+
+ARTIFACTS_DIR = os.path.join(PROJECT_ROOT, "artifacts", "models")
 
 @asynccontextmanager
 async def lifespan(app : FastAPI):
     app.state.artifact = InferenceArtifacts(
         artifact_dir=ARTIFACTS_DIR,
-        config_dir="polynomial_ridge"
+        model="polynomial_ridge"
     )
     yield
 
