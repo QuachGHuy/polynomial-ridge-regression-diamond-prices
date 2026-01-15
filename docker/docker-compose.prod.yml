@@ -1,0 +1,15 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: prod
+    container_name: diamond-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../artifacts:/app/artifacts
+      - ../configs:/app/configs
+    environment:
+      - ENV=prod
+    restart: unless-stopped

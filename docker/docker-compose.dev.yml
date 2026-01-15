@@ -1,0 +1,12 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: dev
+    container_name: diamond-api-dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ..:/app
+    command: uvicorn src.api.app:app --host 0.0.0.0 --port 8000 --reload
