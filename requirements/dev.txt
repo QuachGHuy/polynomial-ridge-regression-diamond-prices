@@ -1,0 +1,11 @@
+-r base.txt
+-r prod.txt
+
+jupyter_core==5.9.1
+jupyter_client==8.7.0
+ipykernel==7.1.0
+ipython==9.8.0
+debugpy==1.8.19
+
+matplotlib==3.10.8
+seaborn==0.13.2
