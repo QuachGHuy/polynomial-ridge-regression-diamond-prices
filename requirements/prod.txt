@@ -1,0 +1,6 @@
+-r base.txt
+
+fastapi==0.125.0
+uvicorn==0.38.0
+pydantic==2.12.5
+starlette==0.50.0
